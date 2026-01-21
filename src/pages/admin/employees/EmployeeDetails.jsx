@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-    Printer,
     Edit,
     ChevronDown,
     ChevronUp,
@@ -127,13 +126,6 @@ const EmployeeDetails = () => {
         setShowEditModal(true);
     };
 
-    const handlePrint = () => {
-        // Hide buttons before printing
-        const printContent = document.querySelector('.employee-details-print');
-        if (printContent) {
-            window.print();
-        }
-    };
 
     // Reusable Section Component
     const SectionCard = ({ title, isOpen, onToggle, children, showEdit = true, onEdit }) => (
@@ -177,12 +169,7 @@ const EmployeeDetails = () => {
                     >
                         <CreditCard size={16} /> Bank & Statutory
                     </button>
-                    <button
-                        onClick={() => window.print()}
-                        className="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 p-2 rounded-lg shadow-sm transition-colors"
-                    >
-                        <Printer size={18} />
-                    </button>
+
                 </div>
             </div>
 
