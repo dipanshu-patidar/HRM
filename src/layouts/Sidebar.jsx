@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             subItems: [
                 { label: "Projects", path: "/admin/projects/list" },
                 { label: "Tasks", path: "/admin/projects/tasks" },
-                { label: "Task Board", path: "/admin/projects/board" },
+                // { label: "Task Board", path: "/admin/projects/board" },
             ]
         },
 
