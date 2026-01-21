@@ -5,6 +5,8 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
 import Client from "./pages/admin/Projects/Client/Client";
+import ProjectList from "./pages/admin/Projects/Project/ProjectList";
+import ProjectTask from "./pages/admin/Projects/Task/ProjectTask";
 import EmployeeDashboard from "./pages/employee/Dashboard";
 import Holidays from "./pages/admin/Holidays";
 import Leaves from "./pages/admin/attendance/Leaves";
@@ -56,6 +58,8 @@ const AppRoutes = () => {
                 <Route path="attendance/shift" element={<ScheduleTiming />} />
                 <Route path="attendance/overtime" element={<Overtime />} />
                 <Route path="projects/clients" element={<Client />} />
+                <Route path="projects/list" element={<ProjectList />} />
+                <Route path="projects/tasks" element={<ProjectTask />} />
                 {/* Placeholder for other routes to avoid 404s on menu clicks */}
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>
