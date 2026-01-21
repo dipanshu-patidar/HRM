@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, Briefcase } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, Briefcase, Users } from "lucide-react";
 import ExportButton from "../../../components/common/ExportButton";
 
 const Referrals = () => {

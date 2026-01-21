@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Edit, Trash2, X, ChevronDown, DollarSign, Download } from "lucide-react";
+import { Plus, Edit, Trash2, X, ChevronDown, DollarSign, Download, Search } from "lucide-react";
 import ExportButton from "../../../components/common/ExportButton";
 
 const PayrollItems = () => {
