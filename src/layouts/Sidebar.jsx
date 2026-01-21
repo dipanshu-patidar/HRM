@@ -84,8 +84,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             icon: Clock,
             subItems: [
                 { label: "Leaves", path: "/admin/attendance/leaves" },
-                { label: "Attendance (Admin)", path: "/admin/attendance/admin" },
-                { label: "Attendance (Employee)", path: "/admin/attendance/employee" },
+                { label: "Attendance", path: "/admin/attendance/employee" },
                 { label: "Timesheets", path: "/admin/attendance/timesheets" },
                 { label: "Shift & Schedule", path: "/admin/attendance/shift" },
                 { label: "Overtime", path: "/admin/attendance/overtime" },

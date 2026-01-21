@@ -5,6 +5,12 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import EmployeeDashboard from "./pages/employee/Dashboard";
+import Holidays from "./pages/admin/Holidays";
+import Leaves from "./pages/admin/attendance/Leaves";
+import EmployeeAttendance from "./pages/admin/attendance/EmployeeAttendance";
+import Timesheets from "./pages/admin/attendance/Timesheets";
+import ScheduleTiming from "./pages/admin/attendance/ScheduleTiming";
+import Overtime from "./pages/admin/attendance/Overtime";
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -42,6 +48,12 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="holidays" element={<Holidays />} />
+                <Route path="attendance/leaves" element={<Leaves />} />
+                <Route path="attendance/employee" element={<EmployeeAttendance />} />
+                <Route path="attendance/timesheets" element={<Timesheets />} />
+                <Route path="attendance/shift" element={<ScheduleTiming />} />
+                <Route path="attendance/overtime" element={<Overtime />} />
                 {/* Placeholder for other routes to avoid 404s on menu clicks */}
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>
