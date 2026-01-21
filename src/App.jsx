@@ -3,9 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
-import AdminDashboard from "./components/admin/AdminDashboard/AdminDashboard";
-import Client from "./components/admin/Projects/Client/Client";
+import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
+import Client from "./pages/admin/Projects/Client/Client";
+import ProjectList from "./pages/admin/Projects/Project/ProjectList";
+import ProjectTask from "./pages/admin/Projects/Task/ProjectTask";
 import EmployeeDashboard from "./pages/employee/Dashboard";
+import EmployeeList from "./pages/admin/employees/EmployeeList";
+import EmployeeDetails from "./pages/admin/employees/EmployeeDetails";
 import Holidays from "./pages/admin/Holidays";
 import Leaves from "./pages/admin/attendance/Leaves";
 import EmployeeAttendance from "./pages/admin/attendance/EmployeeAttendance";
@@ -62,6 +66,8 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="employees/list" element={<EmployeeList />} />
+                <Route path="employees/details" element={<EmployeeDetails />} />
                 <Route path="holidays" element={<Holidays />} />
                 <Route path="attendance/leaves" element={<Leaves />} />
                 <Route path="attendance/employee" element={<EmployeeAttendance />} />
@@ -82,6 +88,8 @@ const AppRoutes = () => {
                 <Route path="payroll/payslip" element={<Payslip />} />
                 <Route path="payroll/items" element={<PayrollItems />} />
                 <Route path="projects/clients" element={<Client />} />
+                <Route path="projects/list" element={<ProjectList />} />
+                <Route path="projects/tasks" element={<ProjectTask />} />
                 {/* Placeholder for other routes to avoid 404s on menu clicks */}
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>

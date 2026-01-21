@@ -16,32 +16,40 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 // Stat Card Component
 const StatCard = ({ icon: Icon, iconBg, title, value, comparison, percentage, isPositive, link }) => {
     return (
-        <div className="admindashboard-stat-card bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+        <div className="admindashboard-stat-card bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all group">
             <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${iconBg}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${iconBg} shadow-sm transform group-hover:scale-110 transition-transform`}>
                         <Icon size={24} className="text-white" strokeWidth={2} />
                     </div>
 
-                    <div className="flex-1">
-                        <h3 className="text-sm text-gray-500 font-medium mb-1">{title}</h3>
-                        <div className="flex items-baseline gap-2 mb-1">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-sm text-gray-500 font-medium mb-1 truncate">{title}</h3>
+                        <div className="flex items-baseline gap-2 mb-1 flex-wrap">
                             <p className="text-2xl font-bold text-gray-800">{value}</p>
-                            {comparison && <span className="text-sm text-gray-400">{comparison}</span>}
+                            {comparison && <span className="text-sm text-gray-400 font-medium">{comparison}</span>}
                         </div>
 
-                        {percentage && (
-                            <div className="flex items-center gap-1 mt-2">
-                                {isPositive ? (
-                                    <ArrowUpRight size={16} className="text-green-500" />
-                                ) : (
-                                    <ArrowDownRight size={16} className="text-red-500" />
-                                )}
-                                <span className={`text-sm font-medium ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                                    {percentage}
-                                </span>
-                            </div>
-                        )}
+                        <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
+                            {percentage && (
+                                <div className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">
+                                    {isPositive ? (
+                                        <ArrowUpRight size={14} className="text-green-500" />
+                                    ) : (
+                                        <ArrowDownRight size={14} className="text-red-500" />
+                                    )}
+                                    <span className={`text-xs font-bold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                                        {percentage}
+                                    </span>
+                                </div>
+                            )}
+
+                            {link && (
+                                <a href="#" className="text-xs font-semibold text-primary hover:text-orange-600 transition-colors">
+                                    {link} →
+                                </a>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,18 +112,18 @@ const AttendanceOverview = () => {
                 ))}
             </div>
 
-            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                     <div className="flex -space-x-2">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs font-semibold text-gray-600">
+                            <div key={i} className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs font-semibold text-gray-600 shadow-sm">
                                 {String.fromCharCode(64 + i)}
                             </div>
                         ))}
                     </div>
-                    <span className="text-sm text-gray-600">Total Absentees: 12</span>
+                    <span className="text-sm text-gray-600 font-medium">Total Absentees: 12</span>
                 </div>
-                <a href="#" className="text-sm text-primary hover:text-orange-600 font-medium transition-colors">
+                <a href="#" className="text-sm text-primary hover:text-orange-600 font-bold transition-colors bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-100 sm:border-none sm:bg-transparent sm:px-0 sm:py-0">
                     View Details →
                 </a>
             </div>
@@ -142,11 +150,11 @@ const SalesOverview = () => {
 
     return (
         <div className="admindashboard-sales-card bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <h3 className="text-lg font-bold text-gray-800">Sales Overview</h3>
-                <div className="flex items-center gap-4">
-                    <span className="text-xs text-gray-400">Last Updated at 11:30PM</span>
-                    <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-200">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+                    <span className="text-xs text-gray-400 font-medium whitespace-nowrap order-2 sm:order-1">Last Updated at 11:30PM</span>
+                    <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-200 bg-gray-50 w-full sm:w-auto order-1 sm:order-2">
                         <option>All Departments</option>
                         <option>HR</option>
                         <option>Sales</option>
