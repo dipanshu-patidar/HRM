@@ -30,6 +30,18 @@ import EmployeeSalary from "./pages/admin/payroll/EmployeeSalary";
 import Payslip from "./pages/admin/payroll/Payslip";
 import PayrollItems from "./pages/admin/payroll/PayrollItems";
 
+// Employee Pages
+import EmployeeProfile from "./pages/employee/Profile";
+import EmployeeAttendancePage from "./pages/employee/Attendance";
+import EmployeeLeaves from "./pages/employee/Leaves";
+import EmployeeHolidays from "./pages/employee/Holidays";
+import EmployeeProjects from "./pages/employee/Projects";
+import EmployeeTasks from "./pages/employee/Tasks";
+import EmployeePerformance from "./pages/employee/Performance";
+import EmployeeTraining from "./pages/employee/Training";
+import EmployeePayslip from "./pages/employee/Payslip";
+import EmployeeTickets from "./pages/employee/Tickets";
+
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
     const { user, loading } = useAuth();
@@ -101,6 +113,16 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<EmployeeDashboard />} />
+                <Route path="profile" element={<EmployeeProfile />} />
+                <Route path="attendance" element={<EmployeeAttendancePage />} />
+                <Route path="leaves" element={<EmployeeLeaves />} />
+                <Route path="holidays" element={<EmployeeHolidays />} />
+                <Route path="projects" element={<EmployeeProjects />} />
+                <Route path="tasks" element={<EmployeeTasks />} />
+                <Route path="performance" element={<EmployeePerformance />} />
+                <Route path="training" element={<EmployeeTraining />} />
+                <Route path="payroll" element={<EmployeePayslip />} />
+                <Route path="tickets" element={<EmployeeTickets />} />
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>
         </Routes>
