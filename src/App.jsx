@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
+import AdminDashboard from "./components/admin/AdminDashboard/AdminDashboard";
+import Client from "./components/admin/Projects/Client/Client";
 import EmployeeDashboard from "./pages/employee/Dashboard";
 
 // Protected Route Wrapper
@@ -42,6 +43,7 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="projects/clients" element={<Client />} />
                 {/* Placeholder for other routes to avoid 404s on menu clicks */}
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>
