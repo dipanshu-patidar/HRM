@@ -265,7 +265,7 @@ const Overtime = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in duration-200">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100">
                             <h2 className="text-xl font-bold text-gray-800">Add Overtime</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">

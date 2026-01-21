@@ -261,10 +261,10 @@ const Leaves = () => {
                                     <td className="p-4">
                                         <span
                                             className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit ${leave.status === "Approved"
-                                                    ? "bg-green-100 text-green-600 border border-green-200"
-                                                    : leave.status === "Declined"
-                                                        ? "bg-white text-gray-500 border border-gray-300" // UI shows radio button style for declined, I'll match simple style or text
-                                                        : "bg-yellow-100 text-yellow-600 border border-yellow-200"
+                                                ? "bg-green-100 text-green-600 border border-green-200"
+                                                : leave.status === "Declined"
+                                                    ? "bg-white text-gray-500 border border-gray-300" // UI shows radio button style for declined, I'll match simple style or text
+                                                    : "bg-yellow-100 text-yellow-600 border border-yellow-200"
                                                 }`}
                                         >
                                             {leave.status === "Approved" && <span>•</span>}
@@ -293,7 +293,7 @@ const Leaves = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-4 border-b border-gray-100">
                             <h2 className="text-xl font-bold text-gray-800">Add Leave</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
