@@ -5,6 +5,8 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import EmployeeDashboard from "./pages/employee/Dashboard";
+import EmployeeList from "./pages/admin/employees/EmployeeList";
+import EmployeeDetails from "./pages/admin/employees/EmployeeDetails";
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -42,6 +44,8 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="employees/list" element={<EmployeeList />} />
+                <Route path="employees/details" element={<EmployeeDetails />} />
                 {/* Placeholder for other routes to avoid 404s on menu clicks */}
                 <Route path="*" element={<div className="p-4 text-gray-500">Page under construction</div>} />
             </Route>
