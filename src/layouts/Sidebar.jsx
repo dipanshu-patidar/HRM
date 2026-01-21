@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             subItems: [
                 { label: "Projects", path: "/admin/projects/list" },
                 { label: "Tasks", path: "/admin/projects/tasks" },
-                { label: "Task Board", path: "/admin/projects/board" },
+                // { label: "Task Board", path: "/admin/projects/board" },
             ]
         },
 
@@ -96,9 +96,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             icon: BarChart,
             subItems: [
                 { label: "Performance Indicator", path: "/admin/performance/indicator" },
-                { label: "Performance Review", path: "/admin/performance/review" },
                 { label: "Performance Appraisal", path: "/admin/performance/appraisal" },
-                { label: "Goal List", path: "/admin/performance/goals" },
+                { label: "Goal Tracking", path: "/admin/performance/goals" },
                 { label: "Goal Type", path: "/admin/performance/goal-types" },
             ],
         },

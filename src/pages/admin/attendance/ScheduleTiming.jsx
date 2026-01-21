@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, ChevronDown, Check, X, Download, Clock } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const ScheduleTiming = () => {
     // Mock Data
@@ -40,6 +41,7 @@ const ScheduleTiming = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isDateRangeOpen, setIsDateRangeOpen] = useState(false);
     const [isSortByOpen, setIsSortByOpen] = useState(false);
 
@@ -80,12 +82,56 @@ const ScheduleTiming = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+
+        if (editingItem) {
+            setSchedules(schedules.map(s => s.id === editingItem.id ? {
+                ...s,
+                name: formData.employeeName !== "Select" ? formData.employeeName : s.name,
+                // Update other fields as needed based on form data which seems to be comprehensive
+            } : s));
+        }
         closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        // Pre-fill form data roughly mapping schedule item to form structure
+        // Since schedule item structure is different from form data, we do best effort or mock
+        setFormData({
+            ...formData,
+            employeeName: item.name,
+            department: "Select", // Assuming not available in item
+            date: "",
+            shift: "Select",
+            startTime: item.timings[0]?.split('-')[1]?.trim().split(' ')[0] || "", // Extracting pseudo time
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        // Reset form
+        setFormData({
+            department: "Select",
+            employeeName: "Select",
+            date: "",
+            shift: "Select",
+            minStartTime: "",
+            startTime: "",
+            maxStartTime: "",
+            minEndTime: "",
+            endTime: "",
+            maxEndTime: "",
+            breakTime: "",
+            acceptExtraHours: false,
+            publish: false
+        });
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
         // Reset form if needed
     };
 
@@ -222,10 +268,10 @@ const ScheduleTiming = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <button
-                                            onClick={() => setIsModalOpen(true)}
+                                            onClick={() => openEditModal(item)}
                                             className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-medium transition-colors"
                                         >
-                                            Schedule Timing
+                                            Edit Schedule
                                         </button>
                                     </td>
                                 </tr>
@@ -245,7 +291,7 @@ const ScheduleTiming = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-gray-800">Add Schedule</h2>
+                            <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Edit Schedule' : 'Add Schedule'}</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <X size={20} />
                             </button>
@@ -362,9 +408,7 @@ const ScheduleTiming = () => {
                             </div>
 
                             <div className="pt-4 mt-4">
-                                <button type="submit" className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-8 py-2.5 rounded-lg font-medium transition-colors shadow-sm">
-                                    Submit
-                                </button>
+                                <button type="submit" className="px-6 py-2.5 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update Schedule' : 'Schedule'}</button>
                             </div>
 
                         </form>
