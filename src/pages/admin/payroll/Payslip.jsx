@@ -7,7 +7,7 @@ const Payslip = () => {
         payslipNo: "#PS4283",
         salaryMonth: "October 2024",
         company: {
-            name: "SmartHR",
+            name: "KiaanHRM",
             address: "3099 Kennedy Court Framingham, MA 01702"
         },
         from: {
@@ -67,9 +67,9 @@ const Payslip = () => {
                 {/* Header with Company Info */}
                 <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
+                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">K</div>
                         <div>
-                            <h2 className="text-xl font-bold text-[#FF6B00]">Smart<span className="text-gray-800">HR</span></h2>
+                            <h2 className="text-xl font-bold text-[#FF6B00]">Kiaan<span className="text-gray-800">HRM</span></h2>
                             <p className="text-sm text-gray-500">{payslipData.company.address}</p>
                         </div>
                     </div>

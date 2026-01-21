@@ -158,11 +158,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className="h-16 flex items-center justify-center border-b border-gray-200 bg-white sticky top-0 z-10 transition-all">
                 {isOpen ? (
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
-                        <h1 className="text-xl font-bold text-gray-800 tracking-tight">Smart<span className="text-primary">HRM</span></h1>
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">K</div>
+                        <h1 className="text-xl font-bold text-gray-800 tracking-tight">Kiaan<span className="text-primary">HRM</span></h1>
                     </div>
                 ) : (
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
+                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">K</div>
                 )}
             </div>
 

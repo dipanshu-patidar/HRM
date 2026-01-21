@@ -75,8 +75,8 @@ const Login = () => {
 
                 {/* Floating Logo Top Right */}
                 <div className="absolute top-8 right-8 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md" style={{ backgroundColor: orangeColor }}>S</div>
-                    <span className="text-xl font-black text-gray-800 tracking-tighter">Smart<span style={{ color: orangeColor }}>HRM</span></span>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md" style={{ backgroundColor: orangeColor }}>K</div>
+                    <span className="text-xl font-black text-gray-800 tracking-tighter">Kiaan<span style={{ color: orangeColor }}>HRM</span></span>
                 </div>
 
                 <div className="w-full max-w-md space-y-8">
@@ -183,7 +183,7 @@ const Login = () => {
                         </div>
 
                         <div className="text-center">
-                            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">&copy; 2024 SmartHRM • All Rights Reserved</p>
+                            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">&copy; 2024 KiaanHRM • All Rights Reserved</p>
                         </div>
                     </div>
                 </div>

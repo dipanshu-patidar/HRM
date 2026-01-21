@@ -71,7 +71,7 @@ const AdminProfile = () => {
 
                                 <div className="w-28 h-28 rounded-lg border-2 overflow-hidden bg-gray-50 flex items-center justify-center p-1" style={{ borderColor: "#a0e85d" /* mimicking the specific light green border color from image if needed, but the user asked for orange mainly. Let's keep a subtle gray/orange mix or just light border as per image */ }}>
                                     <img
-                                        src="https://img.freepik.com/free-photo/handsome-young-businessman-suit-glasses_273609-7159.jpg?t=st=1737460000~exp=1737463600~hmac=6b6f7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b"
+                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH4dcYWVFHFsz8M3Rsjpy2Hg6gQAmgbCIwWA&s"
                                         alt="Avatar Preview"
                                         className="w-full h-full object-cover rounded-md"
                                         onError={(e) => {
