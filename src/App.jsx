@@ -8,6 +8,8 @@ import Client from "./pages/admin/Projects/Client/Client";
 import ProjectList from "./pages/admin/Projects/Project/ProjectList";
 import ProjectTask from "./pages/admin/Projects/Task/ProjectTask";
 import EmployeeDashboard from "./pages/employee/Dashboard";
+import EmployeeList from "./pages/admin/employees/EmployeeList";
+import EmployeeDetails from "./pages/admin/employees/EmployeeDetails";
 import Holidays from "./pages/admin/Holidays";
 import Leaves from "./pages/admin/attendance/Leaves";
 import EmployeeAttendance from "./pages/admin/attendance/EmployeeAttendance";
@@ -51,6 +53,8 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="employees/list" element={<EmployeeList />} />
+                <Route path="employees/details" element={<EmployeeDetails />} />
                 <Route path="holidays" element={<Holidays />} />
                 <Route path="attendance/leaves" element={<Leaves />} />
                 <Route path="attendance/employee" element={<EmployeeAttendance />} />
