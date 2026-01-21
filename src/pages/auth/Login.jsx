@@ -53,7 +53,7 @@ const Login = () => {
 
                 <div className="relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-2xl">
                     <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
-                        Empowering individuals with smooth HR administration.
+                        Empowering individuals with smooth HRM administration.
                     </h1>
 
                     <div className="rounded-2xl overflow-hidden mb-8 shadow-lg bg-white/5 p-2">
