@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, DollarSign, Download } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, DollarSign, Download, Calendar } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const EmployeeSalary = () => {
     // Mock Data
@@ -106,6 +108,7 @@ const EmployeeSalary = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isDesignationOpen, setIsDesignationOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
@@ -135,10 +138,63 @@ const EmployeeSalary = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            employeeName: "Select",
+            netSalary: "",
+            basic: "",
+            da: "",
+            hra: "",
+            conveyance: "",
+            allowance: "",
+            medicalAllowance: "",
+            others: "",
+            tds: "",
+            esi: "",
+            pf: "",
+            leave: "",
+            profTax: "",
+            labourWelfare: "",
+            deductionOthers: ""
+        });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            employeeName: item.name,
+            netSalary: item.salary.replace('$', ''),
+            basic: "",
+            da: "",
+            hra: "",
+            conveyance: "",
+            allowance: "",
+            medicalAllowance: "",
+            others: "",
+            tds: "",
+            esi: "",
+            pf: "",
+            leave: "",
+            profTax: "",
+            labourWelfare: "",
+            deductionOthers: ""
+        });
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
-        setIsModalOpen(false);
+        if (editingItem) {
+            setEmployees(employees.map(emp => emp.id === editingItem.id ? { ...emp, salary: `$${formData.netSalary} ` } : emp));
+        }
+        closeModal();
     };
 
     return (
@@ -153,13 +209,9 @@ const EmployeeSalary = () => {
                     </div>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
-                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm">
-                        <Download size={16} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
@@ -190,7 +242,7 @@ const EmployeeSalary = () => {
                                 className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white font-medium"
                             >
                                 {selectedDesignation}
-                                <ChevronDown size={14} className={`transition-transform duration-200 ${isDesignationOpen ? 'rotate-180' : ''}`} />
+                                <ChevronDown size={14} className={`transition - transform duration - 200 ${isDesignationOpen ? 'rotate-180' : ''} `} />
                             </button>
                             {isDesignationOpen && (
                                 <div className="absolute right-0 top-full mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-30 overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -198,7 +250,7 @@ const EmployeeSalary = () => {
                                         <button
                                             key={option}
                                             onClick={() => { setSelectedDesignation(option); setIsDesignationOpen(false); }}
-                                            className={`w-full text-left px-4 py-2.5 text-sm transition-colors border-b border-gray-50 last:border-0 ${selectedDesignation === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                            className={`w - full text - left px - 4 py - 2.5 text - sm transition - colors border - b border - gray - 50 last: border - 0 ${selectedDesignation === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'} `}
                                         >
                                             {option}
                                         </button>
@@ -214,7 +266,7 @@ const EmployeeSalary = () => {
                                 className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white font-medium"
                             >
                                 Sort By : {selectedSort}
-                                <ChevronDown size={14} className={`transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
+                                <ChevronDown size={14} className={`transition - transform duration - 200 ${isSortOpen ? 'rotate-180' : ''} `} />
                             </button>
                             {isSortOpen && (
                                 <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-30 overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -222,7 +274,7 @@ const EmployeeSalary = () => {
                                         <button
                                             key={option}
                                             onClick={() => { setSelectedSort(option); setIsSortOpen(false); }}
-                                            className={`w-full text-left px-4 py-2.5 text-sm transition-colors border-b border-gray-50 last:border-0 ${selectedSort === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                            className={`w - full text - left px - 4 py - 2.5 text - sm transition - colors border - b border - gray - 50 last: border - 0 ${selectedSort === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'} `}
                                         >
                                             {option}
                                         </button>
@@ -304,7 +356,7 @@ const EmployeeSalary = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -330,8 +382,8 @@ const EmployeeSalary = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Add Employee Salary</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Employee Salary' : 'Add Employee Salary'}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
                         </div>
@@ -438,8 +490,8 @@ const EmployeeSalary = () => {
 
                             {/* Footer Buttons */}
                             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Add Employee Salary</button>
+                                <button type="button" onClick={closeModal} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Add Employee Salary'}</button>
                             </div>
                         </form>
                     </div>

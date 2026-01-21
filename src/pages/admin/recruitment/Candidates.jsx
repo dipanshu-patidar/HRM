@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Users, Download, FileText } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Candidates = () => {
     // Mock Data
@@ -96,12 +97,90 @@ const Candidates = () => {
         }
     ]);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isRoleOpen, setIsRoleOpen] = useState(false);
     const [isStatusOpen, setIsStatusOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
     const [selectedRole, setSelectedRole] = useState("Role");
     const [selectedStatus, setSelectedStatus] = useState("Select Status");
+
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "Select",
+        phone: "",
+        status: "Select"
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (editingItem) {
+            setCandidates(candidates.map(c => c.id === editingItem.id ? {
+                ...c,
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email,
+                appliedRole: formData.role,
+                phone: formData.phone,
+                status: formData.status
+            } : c));
+        } else {
+            // Mock add
+            const id = `Cand-${String(candidates.length + 1).padStart(3, '0')}`;
+            const entry = {
+                id,
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email,
+                avatar: `https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=random`,
+                appliedRole: formData.role,
+                phone: formData.phone,
+                appliedDate: "Today",
+                status: formData.status
+            };
+            setCandidates([...candidates, entry]);
+        }
+        closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        const [firstName, ...lastNameParts] = item.name.split(' ');
+        setFormData({
+            firstName: firstName || "",
+            lastName: lastNameParts.join(' ') || "",
+            email: item.email,
+            role: item.appliedRole,
+            phone: item.phone,
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            role: "Select",
+            phone: "",
+            status: "Select"
+        });
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+    };
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -144,12 +223,15 @@ const Candidates = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
                         </button>
                     </div>
-                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm">
-                        <Download size={16} />
-                        Export
-                        <ChevronDown size={14} />
+                    <ExportButton />
+                    <button
+                        onClick={openAddModal}
+                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
+                    >
+                        <Plus size={18} />
+                        Add Candidate
                     </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                         <ChevronDown size={18} />
                     </button>
                 </div>
@@ -301,12 +383,14 @@ const Candidates = () => {
                                         </div>
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusStyle(item.status)}`}>
-                                            + {item.status}
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 w-fit ${getStatusStyle(item.status)}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${item.status === 'Sent' ? 'bg-green-500' : 'bg-gray-500'}`}></span>
+                                            {item.status}
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -326,6 +410,110 @@ const Candidates = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in duration-200">
+                        <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                            <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Edit Candidate' : 'Add Candidate'}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">First Name <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Last Name <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-bold text-gray-700">Email Address <span className="text-red-500">*</span></label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-bold text-gray-700">Role <span className="text-red-500">*</span></label>
+                                <select
+                                    name="role"
+                                    value={formData.role}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-sm"
+                                >
+                                    <option value="Select">Select Role</option>
+                                    <option value="Web Developer">Web Developer</option>
+                                    <option value="App Developer">App Developer</option>
+                                    <option value="Accountant">Accountant</option>
+                                    <option value="Designer">Designer</option>
+                                </select>
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-bold text-gray-700">Phone</label>
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-bold text-gray-700">Status</label>
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-sm"
+                                >
+                                    <option value="Select">Select Status</option>
+                                    <option value="Sent">Sent</option>
+                                    <option value="Scheduled">Scheduled</option>
+                                    <option value="Interviewed">Interviewed</option>
+                                    <option value="Offered">Offered</option>
+                                    <option value="Hired">Hired</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div className="pt-4 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm"
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Submit'}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

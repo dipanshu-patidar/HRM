@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, BarChart2 } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const PerformanceIndicator = () => {
     // Mock Data
@@ -47,6 +48,7 @@ const PerformanceIndicator = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
 
@@ -76,12 +78,66 @@ const PerformanceIndicator = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+
+        if (editingItem) {
+            setIndicators(indicators.map(item => item.id === editingItem.id ? {
+                ...item,
+                designation: formData.designation,
+                // In a real app we would update all fields, but for mock display these are key
+                status: formData.status
+            } : item));
+        } else {
+            // Mock Add
+            const id = indicators.length + 1;
+            const entry = {
+                id,
+                designation: formData.designation,
+                department: "Development", // Mock
+                approvedBy: { name: "Me", role: "Admin", avatar: "https://ui-avatars.com/api/?name=Admin&background=random" },
+                createdDate: "Today",
+                status: formData.status
+            };
+            setIndicators([...indicators, entry]);
+        }
         closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            ...formData, // Keep defaults for fields not in table item for now
+            designation: item.designation,
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            designation: "Select",
+            customerExperience: "Select",
+            marketing: "Select",
+            management: "Select",
+            administration: "Select",
+            presentationSkills: "Select",
+            qualityOfWork: "Select",
+            efficiency: "Select",
+            integrity: "Select",
+            professionalism: "Select",
+            teamWork: "Select",
+            criticalThinking: "Select",
+            conflictManagement: "Select",
+            attendance: "Select",
+            abilityToMeetDeadline: "Select",
+            status: "Select"
+        });
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
     };
 
     return (
@@ -96,15 +152,13 @@ const PerformanceIndicator = () => {
                     </div>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
                         Add Indicator
-                    </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                        <ChevronDown size={18} />
                     </button>
                 </div>
             </div>
@@ -197,7 +251,7 @@ const PerformanceIndicator = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                                                 <Edit size={16} />
                                             </button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
@@ -227,7 +281,7 @@ const PerformanceIndicator = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Add New Indicator</h2>
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Indicator' : 'Add New Indicator'}</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
@@ -340,7 +394,7 @@ const PerformanceIndicator = () => {
                                     type="submit"
                                     className="px-6 py-2.5 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm"
                                 >
-                                    Add Indicator
+                                    {editingItem ? 'Update' : 'Add Indicator'}
                                 </button>
                             </div>
                         </form>

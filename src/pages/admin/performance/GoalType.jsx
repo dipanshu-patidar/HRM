@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, BarChart2 } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, BarChart2 } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const GoalType = () => {
     // Mock Data
@@ -37,6 +39,7 @@ const GoalType = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
 
@@ -51,14 +54,38 @@ const GoalType = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({ goalType: "", description: "", status: "Select" });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            goalType: item.type,
+            description: item.description,
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+        if (editingItem) {
+            setTypes(types.map(t => t.id === editingItem.id ? {
+                ...t,
+                type: formData.goalType,
+                description: formData.description,
+                status: formData.status
+            } : t));
+        }
         closeModal();
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
     };
 
     return (
@@ -74,15 +101,13 @@ const GoalType = () => {
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
                         Add Goal
                     </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                        <ChevronDown size={18} />
-                    </button>
+                    <ExportButton />
                 </div>
             </div>
 
@@ -97,7 +122,7 @@ const GoalType = () => {
                             className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors bg-white font-medium min-w-[160px] justify-between"
                         >
                             Sort By : {selectedSort}
-                            <ChevronDown size={14} className={`transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
+                            <ChevronDown size={14} className={`transition - transform duration - 200 ${isSortOpen ? 'rotate-180' : ''} `} />
                         </button>
                         {isSortOpen && (
                             <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-30 overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -105,7 +130,7 @@ const GoalType = () => {
                                     <button
                                         key={option}
                                         onClick={() => { setSelectedSort(option); setIsSortOpen(false); }}
-                                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors border-b border-gray-50 last:border-0 ${selectedSort === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                        className={`w - full text - left px - 4 py - 2.5 text - sm transition - colors border - b border - gray - 50 last: border - 0 ${selectedSort === option ? 'bg-[#FF6B00] text-white font-bold' : 'text-gray-700 hover:bg-gray-50'} `}
                                     >
                                         {option}
                                     </button>
@@ -161,7 +186,7 @@ const GoalType = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                                                 <Edit size={16} />
                                             </button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
@@ -191,7 +216,7 @@ const GoalType = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Add Goal Type</h2>
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Goal Type' : 'Add Goal Type'}</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
@@ -246,7 +271,7 @@ const GoalType = () => {
                                     type="submit"
                                     className="px-6 py-2.5 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm"
                                 >
-                                    Add Goal Type
+                                    {editingItem ? 'Update' : 'Add Goal Type'}
                                 </button>
                             </div>
                         </form>

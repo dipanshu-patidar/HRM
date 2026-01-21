@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
-import { Search, Edit, Trash2, ChevronDown, Users, Download } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, Briefcase } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Referrals = () => {
     // Mock Data
@@ -63,73 +65,65 @@ const Referrals = () => {
             refereeEmail: "richard@example.com",
             refereeAvatar: "https://ui-avatars.com/api/?name=Richard+Thompson&background=random",
             bonus: "$250"
-        },
-        {
-            id: "Reff-006",
-            referrerName: "Linda Ray",
-            referrerDept: "Finance",
-            referrerAvatar: "https://ui-avatars.com/api/?name=Linda+Ray&background=random",
-            jobReferred: "DevOps Engineer",
-            jobIcon: "☁️",
-            refereeName: "Kerry Drake",
-            refereeEmail: "kerry@example.com",
-            refereeAvatar: "https://ui-avatars.com/api/?name=Kerry+Drake&background=random",
-            bonus: "$400"
-        },
-        {
-            id: "Reff-007",
-            referrerName: "Elliot Murray",
-            referrerDept: "Developer",
-            referrerAvatar: "https://ui-avatars.com/api/?name=Elliot+Murray&background=random",
-            jobReferred: "Junior Android Developer",
-            jobIcon: "🤖",
-            refereeName: "David Carmona",
-            refereeEmail: "david@example.com",
-            refereeAvatar: "https://ui-avatars.com/api/?name=David+Carmona&background=random",
-            bonus: "$450"
-        },
-        {
-            id: "Reff-008",
-            referrerName: "Rebecca Smith",
-            referrerDept: "Executive",
-            referrerAvatar: "https://ui-avatars.com/api/?name=Rebecca+Smith&background=random",
-            jobReferred: "Senior HTML Developer",
-            jobIcon: "📄",
-            refereeName: "Margaret Soto",
-            refereeEmail: "margaret@example.com",
-            refereeAvatar: "https://ui-avatars.com/api/?name=Margaret+Soto&background=random",
-            bonus: "$220"
-        },
-        {
-            id: "Reff-009",
-            referrerName: "Connie Waters",
-            referrerDept: "Developer",
-            referrerAvatar: "https://ui-avatars.com/api/?name=Connie+Waters&background=random",
-            jobReferred: "Junior UI/UX Designer",
-            jobIcon: "🎨",
-            refereeName: "Jeffrey Thaler",
-            refereeEmail: "jeffrey@example.com",
-            refereeAvatar: "https://ui-avatars.com/api/?name=Jeffrey+Thaler&background=random",
-            bonus: "$165"
-        },
-        {
-            id: "Reff-010",
-            referrerName: "Lori Broaddus",
-            referrerDept: "Designer",
-            referrerAvatar: "https://ui-avatars.com/api/?name=Lori+Broaddus&background=random",
-            jobReferred: "Senior Graphic Designer",
-            jobIcon: "🖌️",
-            refereeName: "Joyce Golston",
-            refereeEmail: "joyce@example.com",
-            refereeAvatar: "https://ui-avatars.com/api/?name=Joyce+Golston&background=random",
-            bonus: "$350"
         }
     ]);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isRoleOpen, setIsRoleOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
     const [selectedRole, setSelectedRole] = useState("Role");
+
+    const [formData, setFormData] = useState({
+        referrerName: "",
+        referrerDept: "Finance",
+        jobReferred: "",
+        refereeName: "",
+        refereeEmail: "",
+        bonus: ""
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            referrerName: item.referrerName,
+            referrerDept: item.referrerDept,
+            jobReferred: item.jobReferred,
+            refereeName: item.refereeName,
+            refereeEmail: item.refereeEmail,
+            bonus: item.bonus.replace('$', '')
+        });
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (editingItem) {
+            setReferrals(referrals.map(r => r.id === editingItem.id ? {
+                ...r,
+                referrerName: formData.referrerName,
+                referrerDept: formData.referrerDept,
+                referrerAvatar: `https://ui-avatars.com/api/?name=${formData.referrerName.replace(' ', '+')}&background=random`,
+                jobReferred: formData.jobReferred,
+                refereeName: formData.refereeName,
+                refereeEmail: formData.refereeEmail,
+                refereeAvatar: `https://ui-avatars.com/api/?name=${formData.refereeName.replace(' ', '+')}&background=random`,
+                bonus: `$${formData.bonus}`
+            } : r));
+        }
+        closeModal();
+    };
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen font-sans text-gray-800">
@@ -143,13 +137,13 @@ const Referrals = () => {
                     </div>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
-                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm">
-                        <Download size={16} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                        <ChevronDown size={18} />
+                    <ExportButton />
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
+                    >
+                        <Plus size={18} />
+                        Add Referral
                     </button>
                 </div>
             </div>
@@ -276,7 +270,7 @@ const Referrals = () => {
                                     <td className="p-4 font-bold text-gray-700">{item.bonus}</td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -288,7 +282,7 @@ const Referrals = () => {
 
                 {/* Pagination */}
                 <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100 overflow-hidden text-[12px] font-medium text-gray-500">
-                    <div>Showing 1 - 10 of 10 entries</div>
+                    <div>Showing 1 - {referrals.length} of {referrals.length} entries</div>
                     <div className="flex items-center gap-1">
                         <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-lg transition-colors rotate-90"><ChevronDown size={14} /></button>
                         <button className="w-8 h-8 flex items-center justify-center bg-[#FF6B00] text-white rounded-full text-xs font-bold">1</button>
@@ -296,6 +290,60 @@ const Referrals = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
+                        <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                            <h2 className="text-xl font-bold text-[#1F2937]">Edit Referral</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                                <X size={22} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Referrer Name</label>
+                                    <input type="text" name="referrerName" value={formData.referrerName} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Department</label>
+                                    <select name="referrerDept" value={formData.referrerDept} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-sm">
+                                        <option value="Finance">Finance</option>
+                                        <option value="Developer">Developer</option>
+                                        <option value="Designer">Designer</option>
+                                        <option value="Manager">Manager</option>
+                                        <option value="Executive Officer">Executive Officer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="space-y-1.5 mb-4">
+                                <label className="text-sm font-bold text-gray-700">Job Referred</label>
+                                <input type="text" name="jobReferred" value={formData.jobReferred} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Referee Name</label>
+                                    <input type="text" name="refereeName" value={formData.refereeName} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Referee Email</label>
+                                    <input type="email" name="refereeEmail" value={formData.refereeEmail} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
+                                </div>
+                            </div>
+                            <div className="space-y-1.5 mb-6">
+                                <label className="text-sm font-bold text-gray-700">Bonus Amount</label>
+                                <input type="text" name="bonus" value={formData.bonus} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
+                            </div>
+                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                                <button type="button" onClick={closeModal} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

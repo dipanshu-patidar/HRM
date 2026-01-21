@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, DollarSign, Download } from "lucide-react";
+import { Plus, Edit, Trash2, X, ChevronDown, DollarSign, Download } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const PayrollItems = () => {
     // Mock Data for Additions
@@ -25,6 +26,7 @@ const PayrollItems = () => {
 
     const [activeTab, setActiveTab] = useState("Additions");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
 
@@ -32,6 +34,8 @@ const PayrollItems = () => {
         name: "",
         categoryName: "Monthly Remuneration",
         amount: "",
+        rateType: "Select",
+        rate: "",
         unitCalculation: false,
         assignee: "noAssignee"
     });
@@ -44,10 +48,73 @@ const PayrollItems = () => {
         });
     };
 
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            name: "",
+            categoryName: "Monthly Remuneration",
+            amount: "",
+            rateType: "Select",
+            rate: "",
+            unitCalculation: false,
+            assignee: "noAssignee"
+        });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        if (activeTab === "Additions") {
+            setFormData({
+                name: item.name,
+                categoryName: item.category,
+                amount: item.amount.replace('$', ''),
+                rateType: "Select",
+                rate: "",
+                unitCalculation: false,
+                assignee: "noAssignee"
+            });
+        } else if (activeTab === "Overtime") {
+            setFormData({
+                name: item.name,
+                categoryName: "Monthly Remuneration",
+                amount: "",
+                rateType: "Hourly",
+                rate: item.rate.replace('Hourly ', ''),
+                unitCalculation: false,
+                assignee: "noAssignee"
+            });
+        } else {
+            setFormData({
+                name: item.name,
+                categoryName: "Monthly Remuneration",
+                amount: item.amount.replace('$', ''),
+                rateType: "Select",
+                rate: "",
+                unitCalculation: false,
+                assignee: "noAssignee"
+            });
+        }
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
-        setIsModalOpen(false);
+        if (editingItem) {
+            if (activeTab === "Additions") {
+                setAdditions(additions.map(a => a.id === editingItem.id ? { ...a, name: formData.name, category: formData.categoryName, amount: `$${formData.amount}` } : a));
+            } else if (activeTab === "Overtime") {
+                setOvertime(overtime.map(o => o.id === editingItem.id ? { ...o, name: formData.name, rate: `Hourly ${formData.rate}` } : o));
+            } else {
+                setDeductions(deductions.map(d => d.id === editingItem.id ? { ...d, name: formData.name, amount: `$${formData.amount}` } : d));
+            }
+        }
+        closeModal();
     };
 
     const getCurrentData = () => {
@@ -80,11 +147,7 @@ const PayrollItems = () => {
                     </div>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
-                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm">
-                        <Download size={16} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
+                    <ExportButton />
                     <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                         <ChevronDown size={18} />
                     </button>
@@ -104,7 +167,7 @@ const PayrollItems = () => {
                 ))}
                 <div className="flex-1"></div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={openAddModal}
                     className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                 >
                     <Plus size={18} />
@@ -184,7 +247,7 @@ const PayrollItems = () => {
                                     {(activeTab === "Additions" || activeTab === "Deductions") && <td className="p-4 text-gray-700 font-medium">{item.amount}</td>}
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -210,8 +273,8 @@ const PayrollItems = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-[#1F2937]">{getButtonLabel()}</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? `Edit ${activeTab.slice(0, -1)}` : getButtonLabel()}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
                         </div>

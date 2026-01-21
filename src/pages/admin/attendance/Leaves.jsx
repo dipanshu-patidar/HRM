@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Calendar, FileText, Activity, Box, Filter, Download } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Leaves = () => {
     // Mock Data
@@ -57,6 +58,7 @@ const Leaves = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [newLeave, setNewLeave] = useState({
         type: "",
         from: "",
@@ -80,24 +82,58 @@ const Leaves = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Calculate days dummy logic
-        const days = "2 Days";
 
-        const id = leaves.length + 1;
-        const entry = {
-            id,
-            ...newLeave,
-            days: days,
-            approvedBy: { name: "Me", role: "Admin", avatar: "https://ui-avatars.com/api/?name=Admin&background=random" },
-            status: "Pending" // Default status
-        };
+        if (editingItem) {
+            setLeaves(leaves.map(item => item.id === editingItem.id ? {
+                ...item,
+                ...newLeave,
+                approvedBy: item.approvedBy // Keep existing approver
+            } : item));
+        } else {
+            // Calculate days dummy logic
+            const days = "2 Days";
 
-        setLeaves([...leaves, entry]);
+            const id = leaves.length + 1;
+            const entry = {
+                id,
+                ...newLeave,
+                days: days,
+                approvedBy: { name: "Me", role: "Admin", avatar: "https://ui-avatars.com/api/?name=Admin&background=random" },
+                status: "Pending" // Default status
+            };
+
+            setLeaves([...leaves, entry]);
+        }
         closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setNewLeave({
+            type: item.type,
+            from: item.from,
+            to: item.to,
+            days: item.days,
+            reason: item.description
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setNewLeave({
+            type: "",
+            from: "",
+            to: "",
+            days: "",
+            reason: ""
+        });
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
         setNewLeave({ type: "", from: "", to: "", days: "", reason: "" });
     };
 
@@ -118,14 +154,10 @@ const Leaves = () => {
                     </div>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-3">
-                    <button className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
-                        <Download size={18} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
+                        onClick={openAddModal}
+                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
                         Add Leave
@@ -275,7 +307,7 @@ const Leaves = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                            <button onClick={() => openEditModal(leave)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                                                 <Edit size={16} />
                                             </button>
                                             <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
@@ -294,8 +326,8 @@ const Leaves = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in fade-in zoom-in duration-200">
-                        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-800">Add Leave</h2>
+                        <div className="flex items-center justify-between p-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+                            <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Edit Leave' : 'Add Leave'}</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <X size={20} />
                             </button>
@@ -386,12 +418,7 @@ const Leaves = () => {
                                 >
                                     Cancel
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-medium transition-colors shadow-sm"
-                                >
-                                    Add Leave
-                                </button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Add Leave'}</button>
                             </div>
                         </form>
                     </div>

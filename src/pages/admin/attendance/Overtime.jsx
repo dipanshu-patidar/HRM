@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, Info, UserCheck, Clock, UserX, FileText } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Overtime = () => {
     // Mock Data
@@ -52,6 +53,7 @@ const Overtime = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [formData, setFormData] = useState({
         employee: "Select",
@@ -76,12 +78,48 @@ const Overtime = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle logic
+        if (editingItem) {
+            setOvertimes(overtimes.map(item => item.id === editingItem.id ? {
+                ...item,
+                employee: { ...item.employee, name: formData.employee.split('|')[0] || item.employee.name }, // simplistic update
+                date: formData.date,
+                hours: formData.overtimeHours,
+                description: formData.description,
+                status: formData.status
+            } : item));
+        }
         closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            employee: item.employee.name,
+            date: "2024-01-14", // Mock date format for input
+            overtimeHours: item.hours,
+            remainingHours: "",
+            description: "",
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            employee: "Select",
+            date: "",
+            overtimeHours: "",
+            remainingHours: "",
+            description: "",
+            status: "Select"
+        });
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
         setFormData({
             employee: "Select",
             date: "",
@@ -103,30 +141,9 @@ const Overtime = () => {
                     </div>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsExportOpen(!isExportOpen)}
-                            className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm ml-2 font-medium"
-                        >
-                            <Download size={18} />
-                            Export
-                            <ChevronDown size={14} />
-                        </button>
-                        {isExportOpen && (
-                            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
-                                <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium">
-                                    <FileText size={16} />
-                                    Export as PDF
-                                </button>
-                                <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50 font-medium">
-                                    <FileText size={16} />
-                                    Export as Excel
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
@@ -247,7 +264,7 @@ const Overtime = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                                                 <Edit size={16} />
                                             </button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
@@ -263,122 +280,119 @@ const Overtime = () => {
             </div>
 
             {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in duration-200">
-                        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-800">Add Overtime</h2>
-                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
-                                <X size={20} />
-                            </button>
+            {
+                isModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                        <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in duration-200">
+                            <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                                <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Edit Overtime' : 'Add Overtime'}</h2>
+                                <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Employee <span className="text-red-500">*</span></label>
+                                    <div className="relative">
+                                        <select
+                                            name="employee"
+                                            value={formData.employee}
+                                            onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white appearance-none"
+                                            required
+                                        >
+                                            <option value="Select">Select</option>
+                                            <option value="Anthony Lewis">Anthony Lewis</option>
+                                            <option value="Brian Villalobos">Brian Villalobos</option>
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Overtime date <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-bold text-gray-700">Overtime <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="number"
+                                            name="overtimeHours"
+                                            value={formData.overtimeHours}
+                                            onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-bold text-gray-700">Remaining Hours <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="number"
+                                            name="remainingHours"
+                                            value={formData.remainingHours}
+                                            onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Description</label>
+                                    <textarea
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        rows="4"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+                                    ></textarea>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-bold text-gray-700">Status <span className="text-red-500">*</span></label>
+                                    <div className="relative">
+                                        <select
+                                            name="status"
+                                            value={formData.status}
+                                            onChange={handleInputChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white appearance-none"
+                                            required
+                                        >
+                                            <option value="Select">Select</option>
+                                            <option value="Accepted">Accepted</option>
+                                            <option value="Rejected">Rejected</option>
+                                            <option value="Pending">Pending</option>
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-bold transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Add Overtime'}</button>
+                                </div>
+                            </form>
                         </div>
-
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-bold text-gray-700">Employee <span className="text-red-500">*</span></label>
-                                <div className="relative">
-                                    <select
-                                        name="employee"
-                                        value={formData.employee}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white appearance-none"
-                                        required
-                                    >
-                                        <option value="Select">Select</option>
-                                        <option value="Anthony Lewis">Anthony Lewis</option>
-                                        <option value="Brian Villalobos">Brian Villalobos</option>
-                                    </select>
-                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-bold text-gray-700">Overtime date <span className="text-red-500">*</span></label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                    required
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-bold text-gray-700">Overtime <span className="text-red-500">*</span></label>
-                                    <input
-                                        type="number"
-                                        name="overtimeHours"
-                                        value={formData.overtimeHours}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-bold text-gray-700">Remaining Hours <span className="text-red-500">*</span></label>
-                                    <input
-                                        type="number"
-                                        name="remainingHours"
-                                        value={formData.remainingHours}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-bold text-gray-700">Description</label>
-                                <textarea
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleInputChange}
-                                    rows="4"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
-                                ></textarea>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-bold text-gray-700">Status <span className="text-red-500">*</span></label>
-                                <div className="relative">
-                                    <select
-                                        name="status"
-                                        value={formData.status}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white appearance-none"
-                                        required
-                                    >
-                                        <option value="Select">Select</option>
-                                        <option value="Accepted">Accepted</option>
-                                        <option value="Rejected">Rejected</option>
-                                        <option value="Pending">Pending</option>
-                                    </select>
-                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
-                                <button
-                                    type="button"
-                                    onClick={closeModal}
-                                    className="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-bold transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-6 py-2.5 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm"
-                                >
-                                    Add Overtime
-                                </button>
-                            </div>
-                        </form>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

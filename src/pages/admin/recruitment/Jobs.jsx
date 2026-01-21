@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Briefcase, Download, Upload, MapPin } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Jobs = () => {
     // Mock Data
@@ -77,6 +78,7 @@ const Jobs = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [activeTab, setActiveTab] = useState("Basic Information");
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isRoleOpen, setIsRoleOpen] = useState(false);
@@ -112,8 +114,90 @@ const Jobs = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+
+        if (editingItem) {
+            setJobs(jobs.map(j => j.id === editingItem.id ? {
+                ...j,
+                title: formData.jobTitle,
+                category: formData.jobCategory,
+                location: `${formData.city}, ${formData.country}`,
+                salaryRange: `${formData.minSalary} - ${formData.maxSalary} / month`,
+                // ... update other fields if displayed
+            } : j));
+        } else {
+            // Mock Add
+            const id = `Job-${String(jobs.length + 1).padStart(3, '0')}`;
+            const entry = {
+                id,
+                icon: "🆕",
+                title: formData.jobTitle,
+                applicants: 0,
+                category: formData.jobCategory,
+                location: `${formData.city}, ${formData.country}`,
+                salaryRange: `${formData.minSalary} - ${formData.maxSalary} / month`,
+                postedDate: "Today"
+            };
+            setJobs([...jobs, entry]);
+        }
+        closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        // Parse location and salary range if possible, or just set defaults/raw
+        // For mock, we'll try to split location
+        const [city, country] = item.location.split(', ');
+
+        setFormData({
+            ...formData,
+            jobTitle: item.title,
+            jobCategory: item.category,
+            city: city || "",
+            country: country || "Select",
+            // Mock other fields as they aren't in table item
+            minSalary: "20000",
+            maxSalary: "35000",
+            jobType: "Full Time",
+            jobLevel: "Senior",
+            experience: "1-3 Years",
+            qualification: "Bachelors",
+            gender: "Any",
+            expiredDate: "2024-12-31",
+            requiredSkills: "Java, React",
+            address: "123 Main St",
+            zipCode: "12345"
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({
+            jobTitle: "",
+            jobDescription: "",
+            jobCategory: "Select",
+            jobType: "Select",
+            jobLevel: "Select",
+            experience: "Select",
+            qualification: "Select",
+            gender: "Select",
+            minSalary: "Select",
+            maxSalary: "Select",
+            expiredDate: "",
+            requiredSkills: "",
+            address: "",
+            country: "Select",
+            state: "Select",
+            city: "Select",
+            zipCode: ""
+        });
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
+        setActiveTab("Basic Information");
     };
 
     return (
@@ -136,13 +220,9 @@ const Jobs = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
                         </button>
                     </div>
-                    <button className="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium text-sm">
-                        <Download size={16} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
@@ -295,7 +375,7 @@ const Jobs = () => {
                                     <td className="p-4 text-gray-500 font-medium">{item.postedDate}</td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -321,8 +401,8 @@ const Jobs = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Post Job</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Job' : 'Post Job'}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
                         </div>
@@ -524,11 +604,11 @@ const Jobs = () => {
 
                             {/* Footer Buttons */}
                             <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
+                                <button type="button" onClick={closeModal} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
                                 {activeTab === "Basic Information" ? (
                                     <button type="button" onClick={() => setActiveTab("Location")} className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Save & Next</button>
                                 ) : (
-                                    <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Post</button>
+                                    <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Post'}</button>
                                 )}
                             </div>
                         </form>

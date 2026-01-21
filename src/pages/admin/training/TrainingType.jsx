@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, GraduationCap } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, GraduationCap, ToggleLeft, ToggleRight } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const TrainingType = () => {
     // Mock Data
@@ -37,6 +38,7 @@ const TrainingType = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
 
@@ -51,10 +53,37 @@ const TrainingType = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({ type: "", description: "", status: "Active" });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            type: item.type,
+            description: item.description,
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+        if (editingItem) {
+            setTypes(types.map(t => t.id === editingItem.id ? { ...t, ...formData } : t));
+        } else {
+            const newItem = { id: Date.now(), ...formData };
+            setTypes([...types, newItem]);
+        }
         setIsModalOpen(false);
+        setEditingItem(null);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
     };
 
     return (
@@ -70,15 +99,13 @@ const TrainingType = () => {
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
                         Add Training type
                     </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                        <ChevronDown size={18} />
-                    </button>
+                    <ExportButton />
                 </div>
             </div>
 
@@ -154,7 +181,7 @@ const TrainingType = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -165,7 +192,7 @@ const TrainingType = () => {
                 </div>
 
                 <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100 overflow-hidden text-[12px] font-medium text-gray-500">
-                    <div>Showing 1 - 5 of 5 entries</div>
+                    <div>Showing 1 - {types.length} of {types.length} entries</div>
                     <div className="flex items-center gap-1">
                         <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-lg transition-colors rotate-90"><ChevronDown size={14} /></button>
                         <button className="w-8 h-8 flex items-center justify-center bg-[#FF6B00] text-white rounded-full text-xs font-bold">1</button>
@@ -179,14 +206,14 @@ const TrainingType = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Add Training Type</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Training Type' : 'Add Training Type'}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6">
                             <div className="space-y-1.5 mb-4">
-                                <label className="text-sm font-bold text-gray-700">Goal Type</label>
+                                <label className="text-sm font-bold text-gray-700">Training Type</label>
                                 <input type="text" name="type" value={formData.type} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm" />
                             </div>
                             <div className="space-y-1.5 mb-4">
@@ -201,8 +228,8 @@ const TrainingType = () => {
                                 </select>
                             </div>
                             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Add Training type</button>
+                                <button type="button" onClick={closeModal} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Add Training type'}</button>
                             </div>
                         </form>
                     </div>

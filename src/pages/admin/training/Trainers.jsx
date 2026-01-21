@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2, X, ChevronDown, GraduationCap } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, GraduationCap, Phone, Mail, MapPin } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Trainers = () => {
     // Mock Data
@@ -7,51 +8,67 @@ const Trainers = () => {
         {
             id: 1,
             name: "Anthony Lewis",
+            firstName: "Anthony",
+            lastName: "Lewis",
             avatar: "https://ui-avatars.com/api/?name=Anthony+Lewis&background=random",
             phone: "(123) 4567 890",
             email: "anthony@example.com",
+            role: "Leadership Trainer",
             description: "Anthony is a trainer known for his expertise in leadership development.",
             status: "Active"
         },
         {
             id: 2,
             name: "Brian Villalobos",
+            firstName: "Brian",
+            lastName: "Villalobos",
             avatar: "https://ui-avatars.com/api/?name=Brian+Villalobos&background=random",
             phone: "(179) 7382 829",
             email: "brian@example.com",
+            role: "Technical Trainer",
             description: "Brian is a trainer who excels in teaching advanced technical skills.",
             status: "Active"
         },
         {
             id: 3,
             name: "Harvey Smith",
+            firstName: "Harvey",
+            lastName: "Smith",
             avatar: "https://ui-avatars.com/api/?name=Harvey+Smith&background=random",
             phone: "(184) 2719 738",
             email: "harvey@example.com",
+            role: "Soft Skills Trainer",
             description: "Harvey is a trainer known for his expertise in conflict resolution.",
             status: "Active"
         },
         {
             id: 4,
             name: "Stephan Peralt",
+            firstName: "Stephan",
+            lastName: "Peralt",
             avatar: "https://ui-avatars.com/api/?name=Stephan+Peralt&background=random",
             phone: "(193) 7839 748",
             email: "peral@example.com",
+            role: "Innovation Trainer",
             description: "Stephan is a trainer who enhances creative problem-solving skills.",
             status: "Active"
         },
         {
             id: 5,
             name: "Doglas Martini",
+            firstName: "Doglas",
+            lastName: "Martini",
             avatar: "https://ui-avatars.com/api/?name=Doglas+Martini&background=random",
             phone: "(183) 9302 890",
             email: "martiniwr@example.com",
+            role: "Project Management Trainer",
             description: "Doglas is a trainer who enhances project management skills.",
             status: "Active"
         }
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("Last 7 Days");
 
@@ -70,10 +87,51 @@ const Trainers = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const openAddModal = () => {
+        setEditingItem(null);
+        setFormData({ firstName: "", lastName: "", role: "", phone: "", email: "", description: "", status: "Active" });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setFormData({
+            firstName: item.firstName,
+            lastName: item.lastName,
+            role: item.role || "",
+            phone: item.phone,
+            email: item.email,
+            description: item.description,
+            status: item.status
+        });
+        setIsModalOpen(true);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+        if (editingItem) {
+            setTrainers(trainers.map(t => t.id === editingItem.id ? {
+                ...t,
+                ...formData,
+                name: `${formData.firstName} ${formData.lastName}`,
+                avatar: `https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=random`
+            } : t));
+        } else {
+            const newItem = {
+                id: Date.now(),
+                ...formData,
+                name: `${formData.firstName} ${formData.lastName}`,
+                avatar: `https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=random`
+            };
+            setTrainers([...trainers, newItem]);
+        }
         setIsModalOpen(false);
+        setEditingItem(null);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingItem(null);
     };
 
     return (
@@ -89,15 +147,13 @@ const Trainers = () => {
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0 items-center">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
                         Add Trainer
                     </button>
-                    <button className="bg-white border border-gray-300 text-gray-400 hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                        <ChevronDown size={18} />
-                    </button>
+                    <ExportButton />
                 </div>
             </div>
 
@@ -182,7 +238,7 @@ const Trainers = () => {
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2 text-gray-400">
-                                            <button className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"><Edit size={16} /></button>
                                             <button className="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
@@ -193,7 +249,7 @@ const Trainers = () => {
                 </div>
 
                 <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100 overflow-hidden text-[12px] font-medium text-gray-500">
-                    <div>Showing 1 - 5 of 5 entries</div>
+                    <div>Showing 1 - {trainers.length} of {trainers.length} entries</div>
                     <div className="flex items-center gap-1">
                         <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-lg transition-colors rotate-90"><ChevronDown size={14} /></button>
                         <button className="w-8 h-8 flex items-center justify-center bg-[#FF6B00] text-white rounded-full text-xs font-bold">1</button>
@@ -207,8 +263,8 @@ const Trainers = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-y-auto max-h-[95vh] custom-scrollbar animate-in zoom-in duration-200">
                         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white">
-                            <h2 className="text-xl font-bold text-[#1F2937]">Add Trainer</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
+                            <h2 className="text-xl font-bold text-[#1F2937]">{editingItem ? 'Edit Trainer' : 'Add Trainer'}</h2>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full">
                                 <X size={22} />
                             </button>
                         </div>
@@ -249,8 +305,8 @@ const Trainers = () => {
                                 </select>
                             </div>
                             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">Add Trainer</button>
+                                <button type="button" onClick={closeModal} className="px-6 py-2 bg-gray-50 text-gray-700 rounded-lg font-bold hover:bg-gray-100 transition-colors border border-gray-200 text-sm">Cancel</button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Add Trainer'}</button>
                             </div>
                         </form>
                     </div>
