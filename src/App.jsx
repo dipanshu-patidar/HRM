@@ -8,9 +8,14 @@ import Client from "./pages/admin/Projects/Client/Client";
 import EmployeeDashboard from "./pages/employee/Dashboard";
 import EmployeeList from "./pages/admin/employees/EmployeeList";
 import EmployeeDetails from "./pages/admin/employees/EmployeeDetails";
+import Departments from "./pages/admin/employees/Departments";
+import Designations from "./pages/admin/employees/Designations";
 import Holidays from "./pages/admin/Holidays";
 import Leaves from "./pages/admin/attendance/Leaves";
 import EmployeeAttendance from "./pages/admin/attendance/EmployeeAttendance";
+import Policies from "./pages/admin/employees/Policies";
+import Tickets from "./pages/admin/tickets/Tickets";
+import TicketDetails from "./pages/admin/tickets/TicketDetails";
 import Timesheets from "./pages/admin/attendance/Timesheets";
 import ScheduleTiming from "./pages/admin/attendance/ScheduleTiming";
 import Overtime from "./pages/admin/attendance/Overtime";
@@ -53,6 +58,11 @@ const AppRoutes = () => {
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="employees/list" element={<EmployeeList />} />
                 <Route path="employees/details" element={<EmployeeDetails />} />
+                <Route path="departments" element={<Departments />} />
+                <Route path="designations" element={<Designations />} />
+                <Route path="policies" element={<Policies />} />
+                <Route path="tickets" element={<Tickets />} />
+                <Route path="tickets/details" element={<TicketDetails />} />
                 <Route path="holidays" element={<Holidays />} />
                 <Route path="attendance/leaves" element={<Leaves />} />
                 <Route path="attendance/employee" element={<EmployeeAttendance />} />

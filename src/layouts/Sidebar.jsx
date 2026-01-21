@@ -73,7 +73,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             label: "Tickets",
             icon: Ticket,
             subItems: [
-                { label: "Tickets", path: "/admin/tickets/list" },
+                { label: "Tickets", path: "/admin/tickets" },
                 { label: "Ticket Details", path: "/admin/tickets/details" },
             ],
         },
