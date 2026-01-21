@@ -259,6 +259,22 @@ const Tickets = () => {
         setActiveActionId(null);
     };
 
+    // Derived State: Filtered & Sorted Tickets
+    const filteredTickets = tickets.filter(ticket => {
+        const matchesPriority = priorityFilter === 'Priority' || ticket.priority === priorityFilter;
+        const matchesStatus = statusFilter === 'Select Status' || ticket.status === statusFilter;
+        return matchesPriority && matchesStatus;
+    }).sort((a, b) => {
+        if (sortBy === 'Recently Added') {
+            return b.id.localeCompare(a.id); // Simple string ID sort for mock
+        }
+        if (sortBy === 'Priority') {
+            const pMap = { High: 3, Medium: 2, Low: 1 };
+            return (pMap[b.priority] || 0) - (pMap[a.priority] || 0);
+        }
+        return 0; // Default Order
+    });
+
     // Exports
     const exportToPDF = () => {
         const doc = new jsPDF();
@@ -266,14 +282,14 @@ const Tickets = () => {
         doc.autoTable({
             startY: 20,
             head: [["ID", "Title", "Category", "Assign To", "Status", "Priority"]],
-            body: tickets.map(t => [t.id, t.title, t.category, t.assignTo, t.status, t.priority]),
+            body: filteredTickets.map(t => [t.id, t.title, t.category, t.assignTo, t.status, t.priority]),
         });
         doc.save("tickets.pdf");
         setShowExportMenu(false);
     };
 
     const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(tickets);
+        const worksheet = XLSX.utils.json_to_sheet(filteredTickets);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Tickets");
         XLSX.writeFile(workbook, "tickets.xlsx");
@@ -487,7 +503,7 @@ const Tickets = () => {
                     {viewMode === 'list' ? (
                         /* List View */
                         <div className="space-y-4">
-                            {tickets.map((ticket) => (
+                            {filteredTickets.map((ticket) => (
                                 <div key={ticket.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative">
                                     <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                                         <div className="flex-1">
@@ -517,7 +533,7 @@ const Tickets = () => {
                     ) : (
                         /* Grid View */
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {tickets.map((ticket) => (
+                            {filteredTickets.map((ticket) => (
                                 <div key={ticket.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all group relative">
                                     <div className="absolute top-4 right-4" onClick={(e) => e.stopPropagation()}>
                                         <button onClick={() => setActiveActionId(activeActionId === ticket.id ? null : ticket.id)} className="text-gray-400 hover:text-gray-600">
