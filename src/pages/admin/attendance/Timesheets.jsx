@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Search, Edit, Trash2, X, ChevronDown, Download, Info } from "lucide-react";
+import ExportButton from "../../../components/common/ExportButton";
 
 const Timesheets = () => {
     // Mock Data
@@ -47,6 +48,7 @@ const Timesheets = () => {
     ]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [newWork, setNewWork] = useState({
         project: "",
         deadline: "",
@@ -63,22 +65,61 @@ const Timesheets = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Mock Add
-        const id = timesheets.length + 1;
-        const entry = {
-            id,
-            employee: { name: "Me", role: "Admin", avatar: "https://ui-avatars.com/api/?name=Me&background=random" },
-            date: newWork.date || "Today",
-            project: newWork.project || "New Project",
-            assignedHours: newWork.totalHours || 0,
-            workedHours: newWork.hours || 0,
-        };
-        setTimesheets([entry, ...timesheets]);
+
+        if (editingItem) {
+            setTimesheets(timesheets.map(t => t.id === editingItem.id ? {
+                ...t,
+                employee: t.employee, // Keep same employee
+                date: newWork.date,
+                project: newWork.project,
+                assignedHours: newWork.totalHours,
+                workedHours: newWork.hours
+            } : t));
+        } else {
+            // Mock Add
+            const id = timesheets.length + 1;
+            const entry = {
+                id,
+                employee: { name: "Me", role: "Admin", avatar: "https://ui-avatars.com/api/?name=Me&background=random" },
+                date: newWork.date || "Today",
+                project: newWork.project || "New Project",
+                assignedHours: newWork.totalHours || 0,
+                workedHours: newWork.hours || 0,
+            };
+            setTimesheets([entry, ...timesheets]);
+        }
         closeModal();
+    };
+
+    const openEditModal = (item) => {
+        setEditingItem(item);
+        setNewWork({
+            project: item.project,
+            deadline: "",
+            totalHours: item.assignedHours,
+            remainingHours: "",
+            date: item.date,
+            hours: item.workedHours
+        });
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingItem(null);
+        setNewWork({
+            project: "",
+            deadline: "",
+            totalHours: "",
+            remainingHours: "",
+            date: "",
+            hours: ""
+        });
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setEditingItem(null);
         setNewWork({
             project: "",
             deadline: "",
@@ -99,18 +140,14 @@ const Timesheets = () => {
                         <span className="hover:text-primary cursor-pointer">Employee</span> / <span className="text-gray-400">Timesheets</span>
                     </div>
                 </div>
-                <div className="flex gap-2 mt-4 md:mt-0">
-                    <button className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm ml-2">
-                        <Download size={18} />
-                        Export
-                        <ChevronDown size={14} />
-                    </button>
+                <div className="flex gap-2 mt-4 md:mt-0 items-center">
+                    <ExportButton />
                     <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
+                        onClick={openAddModal}
+                        className="bg-[#FF6B00] hover:bg-[#e66000] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm font-medium"
                     >
                         <Plus size={18} />
-                        Add Today's Work
+                        Add Today Work
                     </button>
                 </div>
             </div>
@@ -188,7 +225,7 @@ const Timesheets = () => {
                                     <td className="p-4 pl-12">{item.workedHours}</td>
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                            <button onClick={() => openEditModal(item)} className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                                                 <Edit size={16} />
                                             </button>
                                             <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
@@ -206,9 +243,9 @@ const Timesheets = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
-                        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-800">Add Todays Work</h2>
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-y-auto max-h-[90vh] custom-scrollbar animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Edit Today Work' : 'Add Today Work'}</h2>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <X size={20} />
                             </button>
@@ -305,12 +342,7 @@ const Timesheets = () => {
                                 >
                                     Cancel
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-medium transition-colors shadow-sm"
-                                >
-                                    Add Changes
-                                </button>
+                                <button type="submit" className="px-6 py-2 bg-[#FF6B00] hover:bg-[#e66000] text-white rounded-lg font-bold transition-colors shadow-sm text-sm">{editingItem ? 'Update' : 'Submit'}</button>
                             </div>
 
                         </form>
