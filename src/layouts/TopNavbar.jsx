@@ -28,7 +28,7 @@ const TopNavbar = ({ toggleSidebar, isSidebarOpen }) => {
     const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
     // Determine profile path based on role
-    const profilePath = user?.role === 'employee' ? '/employee/profile' : '/admin/employees/details'; // Fallback for admin or others
+    const profilePath = user?.role === 'employee' ? '/employee/profile' : '/admin/profile';
 
     return (
         <header className="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-6 fixed top-0 right-0 z-40 transition-all duration-300 w-full lg:w-[calc(100%-256px)]"

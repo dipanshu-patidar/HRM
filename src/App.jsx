@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
+import AdminProfile from "./pages/admin/Profile";
 import Client from "./pages/admin/Projects/Client/Client";
 import ProjectList from "./pages/admin/Projects/Project/ProjectList";
 import ProjectTask from "./pages/admin/Projects/Task/ProjectTask";
@@ -83,6 +84,7 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             }>
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="profile" element={<AdminProfile />} />
                 <Route path="employees/list" element={<EmployeeList />} />
                 <Route path="employees/details" element={<EmployeeDetails />} />
                 <Route path="departments" element={<Departments />} />
