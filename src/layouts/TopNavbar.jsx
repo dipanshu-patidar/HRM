@@ -6,41 +6,41 @@ const TopNavbar = ({ toggleSidebar, isSidebarOpen }) => {
     const { user, logout } = useAuth();
 
     return (
-        <header className="h-16 bg-gradient-to-r from-primary to-orange-500 shadow-md flex items-center justify-between px-6 fixed top-0 right-0 z-40 transition-all duration-300 w-full lg:w-[calc(100%-256px)]"
+        <header className="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-6 fixed top-0 right-0 z-40 transition-all duration-300 w-full lg:w-[calc(100%-256px)]"
             style={{ width: isSidebarOpen ? 'calc(100% - 16rem)' : 'calc(100% - 5rem)' }}>
             {/* Left: Toggle & Search */}
             <div className="flex items-center gap-4">
                 <button
                     onClick={toggleSidebar}
-                    className="bg-white/10 hover:bg-white/20 p-2 rounded-lg text-white transition-colors"
+                    className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-gray-700 transition-colors"
                 >
                     <Menu size={20} />
                 </button>
-                <div className="hidden md:flex items-center bg-white/10 rounded-full px-4 py-1.5 border border-white/10">
-                    <Search size={16} className="text-white/70" />
+                <div className="hidden md:flex items-center bg-gray-50 rounded-full px-4 py-1.5 border border-gray-200">
+                    <Search size={16} className="text-gray-400" />
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="bg-transparent border-none outline-none text-white text-sm ml-2 placeholder-white/60 w-64"
+                        className="bg-transparent border-none outline-none text-gray-700 text-sm ml-2 placeholder-gray-400 w-64"
                     />
                 </div>
             </div>
 
             {/* Right: Actions & Profile */}
             <div className="flex items-center gap-6">
-                <button className="relative text-white/90 hover:text-white transition-colors">
+                <button className="relative text-gray-600 hover:text-gray-800 transition-colors">
                     <Bell size={20} />
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-primary"></span>
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
                 </button>
 
-                <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+                <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
                     <div className="text-right hidden md:block">
-                        <h4 className="text-sm font-semibold text-white">{user?.name}</h4>
-                        <p className="text-xs text-white/70 capitalize">{user?.role}</p>
+                        <h4 className="text-sm font-semibold text-gray-800">{user?.name}</h4>
+                        <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                     </div>
                     <div className="relative group cursor-pointer">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-white/20">
-                            <span className="text-primary font-bold text-lg">{user?.name?.charAt(0)}</span>
+                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden border-2 border-orange-100">
+                            <span className="text-white font-bold text-lg">{user?.name?.charAt(0)}</span>
                         </div>
 
                         {/* Dropdown */}
