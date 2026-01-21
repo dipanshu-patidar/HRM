@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/auth/Login";
-import AdminDashboard from "./components/admin/AdminDashboard/AdminDashboard";
-import Client from "./components/admin/Projects/Client/Client";
+import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
+import Client from "./pages/admin/Projects/Client/Client";
 import EmployeeDashboard from "./pages/employee/Dashboard";
 import Holidays from "./pages/admin/Holidays";
 import Leaves from "./pages/admin/attendance/Leaves";
