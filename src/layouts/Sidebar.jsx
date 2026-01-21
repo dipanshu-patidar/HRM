@@ -159,7 +159,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 {isOpen ? (
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
-                        <h1 className="text-xl font-bold text-gray-800 tracking-tight">Smart<span className="text-primary">HR</span></h1>
+                        <h1 className="text-xl font-bold text-gray-800 tracking-tight">Smart<span className="text-primary">HRM</span></h1>
                     </div>
                 ) : (
                     <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
