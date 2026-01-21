@@ -178,9 +178,7 @@ const TicketDetails = () => {
                     >
                         <Plus size={16} /> Add Ticket
                     </button>
-                    <button className="p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
-                        <ChevronDown size={16} className="transform rotate-180" />
-                    </button>
+
                 </div>
             </div>
 
